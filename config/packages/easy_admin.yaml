@@ -1,0 +1,8 @@
+easy_admin:
+    entities:
+        Products:
+            class: App\Entity\Products
+        Customers:
+            class: App\Entity\Customers
+            fields:
+                - { property: 'roles', type: 'array' }

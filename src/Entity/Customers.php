@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\CustomersRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\CustomersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: CustomersRepository::class)]
 class Customers implements UserInterface, PasswordAuthenticatedUserInterface
@@ -22,7 +21,7 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    private array $roles = ['ROLE_USER'];
 
     /**
      * @var string The hashed password
@@ -31,23 +30,22 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $firstName = null;
+    private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $lastName = null;
+    private ?string $lastname = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $registrationDate = null;
 
-    #[ORM\ManyToMany(targetEntity: Products::class)]
-    private Collection $product;
+    #[ORM\ManyToOne(inversedBy: 'customers')]
+    private ?Products $products = null;
 
     public function __construct()
     {
-        $this->product = new ArrayCollection();
+        $this->products = new ArrayCollection();
+        $this->registrationDate = new \DateTime(); // Ajoutez cette ligne pour initialiser la date d'inscription
     }
-
-
 
     public function getId(): ?int
     {
@@ -119,29 +117,30 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getFirstName(): ?string
+    public function getFirstname(): ?string
     {
-        return $this->firstName;
+        return $this->firstname;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setFirstname(string $firstname): static
     {
-        $this->firstName = $firstName;
+        $this->firstname = $firstname;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getLastname(): ?string
     {
-        return $this->lastName;
+        return $this->lastname;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastname(string $lastname): static
     {
-        $this->lastName = $lastName;
+        $this->lastname = $lastname;
 
         return $this;
     }
+
 
     public function getRegistrationDate(): ?\DateTimeInterface
     {
@@ -155,28 +154,15 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Products>
-     */
-    public function getProduct(): Collection
+    public function getProducts(): ?Products
     {
-        return $this->product;
+        return $this->products;
     }
 
-    public function addProduct(Products $product): static
+    public function setProducts(?Products $products): static
     {
-        if (!$this->product->contains($product)) {
-            $this->product->add($product);
-        }
+        $this->products = $products;
 
         return $this;
     }
-
-    public function removeProduct(Products $product): static
-    {
-        $this->product->removeElement($product);
-
-        return $this;
-    }
-
 }

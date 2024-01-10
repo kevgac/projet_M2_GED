@@ -18,12 +18,10 @@ class AccessFds
     private ?\DateTimeInterface $lastLoginDate = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
     private ?Customers $customer = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?fds $fds = null;
+    private ?Fds $fds = null;
 
     public function getId(): ?int
     {
@@ -54,12 +52,12 @@ class AccessFds
         return $this;
     }
 
-    public function getFds(): ?fds
+    public function getFds(): ?Fds
     {
         return $this->fds;
     }
 
-    public function setFds(?fds $fds): static
+    public function setFds(?Fds $fds): static
     {
         $this->fds = $fds;
 
