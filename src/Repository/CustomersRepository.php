@@ -25,6 +25,15 @@ class CustomersRepository extends ServiceEntityRepository implements PasswordUpg
         parent::__construct($registry, Customers::class);
     }
 
+    public function save(Customers $customer, bool $flush = true)
+    {
+        $this->getEntityManager()->persist($customer);
+        
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
