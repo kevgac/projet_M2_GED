@@ -1,0 +1,5 @@
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     '"C:\PROGRA~1\wkhtmltopdf\bin\wkhtmltopdf.exe"' # Utilisez des guillemets doubles
+        options:    []

@@ -5,9 +5,10 @@ namespace App\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CustomersRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: CustomersRepository::class)]
@@ -16,38 +17,34 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column]
-    private array $roles = ['ROLE_USER'];
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    private ?string $password = null;
+    #[ORM\Column(type: 'string')]
+    private string $password;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $lastname = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $registrationDate = null;
+    private ?\DateTimeInterface $registrationDate;
 
-    #[ORM\ManyToOne(inversedBy: 'customers')]
-    private ?Products $products;
-    //private $products;
+    #[ORM\ManyToMany(targetEntity: Products::class, inversedBy: 'customers')]
+    private Collection $products;
 
     public function __construct()
     {
-        //$this->products = new ArrayCollection();
-        $this->registrationDate = new \DateTime(); // Ajoutez cette ligne pour initialiser la date d'inscription
+        $this->products = new ArrayCollection();
+        $this->registrationDate = new \DateTime();
     }
 
     public function getId(): ?int
@@ -156,15 +153,29 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-    public function getProducts(): ?Products
+    /**
+     * @return Collection|Products[]
+     */
+    public function getProducts(): Collection
     {
         return $this->products;
     }
 
-    public function setProducts(?Products $products): static
+    public function addProduct(Products $product): self
     {
-        $this->products = $products;
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->addCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Products $product): self
+    {
+        if ($this->products->removeElement($product)) {
+            $product->removeCustomer($this);
+        }
 
         return $this;
     }
