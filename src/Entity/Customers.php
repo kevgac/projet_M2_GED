@@ -41,11 +41,12 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $registrationDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'customers')]
-    private ?Products $products = null;
+    private ?Products $products;
+    //private $products;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        //$this->products = new ArrayCollection();
         $this->registrationDate = new \DateTime(); // Ajoutez cette ligne pour initialiser la date d'inscription
     }
 
