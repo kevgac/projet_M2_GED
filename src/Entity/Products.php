@@ -2,35 +2,36 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductsRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProductsRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: ProductsRepository::class)]
 class Products
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $unitPrice = null;
 
-    #[ORM\Column(type: "datetime")]
-    private ?\DateTimeInterface $creationDate = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $creationDate;
 
-    #[ORM\OneToMany(mappedBy: 'products', targetEntity: Customers::class)]
+    #[ORM\ManyToMany(targetEntity: Customers::class, mappedBy: 'products')]
     private Collection $customers;
 
     public function __construct()
     {
         $this->customers = new ArrayCollection();
+        $this->creationDate = new \DateTime();
     }
 
     public function getId(): ?int
@@ -75,34 +76,32 @@ class Products
     }
 
     /**
-     * @return Collection<int, Customers>
+     * @return Collection|Customers[]
      */
     public function getCustomers(): Collection
     {
         return $this->customers;
     }
 
-    public function addCustomer(Customers $customer): static
+    public function addCustomer(Customers $customer): self
     {
         if (!$this->customers->contains($customer)) {
             $this->customers->add($customer);
-            $customer->setProducts($this);
+            $customer->addProduct($this);
         }
 
         return $this;
     }
 
-    public function removeCustomer(Customers $customer): static
+    public function removeCustomer(Customers $customer): self
     {
         if ($this->customers->removeElement($customer)) {
-            // set the owning side to null (unless already changed)
-            if ($customer->getProducts() === $this) {
-                $customer->setProducts(null);
-            }
+            $customer->removeProduct($this);
         }
 
         return $this;
     }
+
 
     public function __toString(): string
     {

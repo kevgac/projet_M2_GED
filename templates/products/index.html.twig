@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Produits{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">ChemicalBrothers</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Accueil</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/products">Mes Produits</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_logout') }}">LogOut</a>
+                </li>
+                <!-- Ajouter plus de liens si nécessaire -->
+            </ul>
+        </div>
+    </nav>
+
+    <div class="example-wrapper">
+        <h2>Mes Produits</h2>
+        {% if products %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom du Produit</th>
+                        <th>Prix</th>
+                        <!-- Autres colonnes si nécessaire -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.unitPrice }}</td>
+                            <!-- Afficher d'autres propriétés du produit si nécessaire -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aucun produit trouvé.</p>
+        {% endif %}
+    </div>
+{% endblock %}
