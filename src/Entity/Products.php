@@ -28,6 +28,9 @@ class Products
     #[ORM\ManyToMany(targetEntity: Customers::class, mappedBy: 'products')]
     private Collection $customers;
 
+    #[ORM\OneToOne(mappedBy: 'products', targetEntity: Fds::class, cascade: ['persist', 'remove'])]
+    private ?Fds $fds = null;
+
     public function __construct()
     {
         $this->customers = new ArrayCollection();
@@ -73,6 +76,11 @@ class Products
         $this->creationDate = $creationDate;
 
         return $this;
+    }
+
+    public function getFds(): ?Fds
+    {
+        return $this->fds;
     }
 
     /**

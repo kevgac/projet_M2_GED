@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Informations sur le Produit{% endblock %}
+
+{% block body %}
+<style>
+    .product-wrapper {
+        margin: 1em auto;
+        max-width: 800px;
+        width: 95%;
+        font: 18px/1.5 sans-serif;
+    }
+    .product-wrapper h1 {
+        color: #333;
+    }
+    .product-details, .fds-details {
+        background: #F5F5F5;
+        padding: 2px 6px;
+        border-left: 4px solid #ccc;
+        margin: 10px 0;
+    }
+</style>
+
+<div class="product-wrapper">
+    <h1>Fiche de données sécurité : {{ product.name }}</h1>
+
+    <div class="py-2"></div>
+
+    <div class="product-details">
+        <h2>Informations sur le Produit</h2>
+        <p><strong>Nom :</strong> {{ product.name }}</p>
+        <p><strong>Date de Création :</strong> {{ product.creationDate|date('Y-m-d') }}</p>
+    </div>
+
+    <div class="rounded mx-auto d-block text-center">
+        <img src="https://www.securiteartisan.com/wp-content/uploads/2017/11/picto-chimie-danger.jpg_1644223205.jpg" width="400" height="200">
+    </div>
+
+    {% if fds %}
+        <div class="fds-details">
+            <h2>Informations FDS</h2>
+            <p>{{ fds.description }}</p>
+        </div>
+    {% else %}
+        <p>Informations FDS non disponibles pour ce produit.</p>
+    {% endif %}
+</div>
+{% endblock %}

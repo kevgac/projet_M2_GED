@@ -31,8 +31,6 @@ class Fds
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Products $products = null;
-
-
     public function getId(): ?int
     {
         return $this->id;
