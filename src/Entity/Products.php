@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -18,10 +20,18 @@ class Products
     private ?string $name = null;
 
     #[ORM\Column]
-    private ?float $unitPrice = null;
+    private ?int $unitPrice = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: "datetime")]
     private ?\DateTimeInterface $creationDate = null;
+
+    #[ORM\OneToMany(mappedBy: 'products', targetEntity: Customers::class)]
+    private Collection $customers;
+
+    public function __construct()
+    {
+        $this->customers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -40,12 +50,12 @@ class Products
         return $this;
     }
 
-    public function getUnitPrice(): ?float
+    public function getUnitPrice(): ?int
     {
         return $this->unitPrice;
     }
 
-    public function setUnitPrice(float $unitPrice): static
+    public function setUnitPrice(int $unitPrice): static
     {
         $this->unitPrice = $unitPrice;
 
@@ -62,5 +72,40 @@ class Products
         $this->creationDate = $creationDate;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Customers>
+     */
+    public function getCustomers(): Collection
+    {
+        return $this->customers;
+    }
+
+    public function addCustomer(Customers $customer): static
+    {
+        if (!$this->customers->contains($customer)) {
+            $this->customers->add($customer);
+            $customer->setProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCustomer(Customers $customer): static
+    {
+        if ($this->customers->removeElement($customer)) {
+            // set the owning side to null (unless already changed)
+            if ($customer->getProducts() === $this) {
+                $customer->setProducts(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

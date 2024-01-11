@@ -14,24 +14,24 @@ class Fds
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 900)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $version = null;
+    #[ORM\Column]
+    private ?int $version = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $pdf_Link = null;
+    private ?string $pdfLink = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creationDate = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $lastUpdated = null;
 
-    #[ORM\OneToOne(inversedBy: 'fds', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Products $productId = null;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Products $products = null;
+
 
     public function getId(): ?int
     {
@@ -50,12 +50,12 @@ class Fds
         return $this;
     }
 
-    public function getVersion(): ?string
+    public function getVersion(): ?int
     {
         return $this->version;
     }
 
-    public function setVersion(string $version): static
+    public function setVersion(int $version): static
     {
         $this->version = $version;
 
@@ -64,12 +64,12 @@ class Fds
 
     public function getPdfLink(): ?string
     {
-        return $this->pdf_Link;
+        return $this->pdfLink;
     }
 
-    public function setPdfLink(string $pdf_Link): static
+    public function setPdfLink(string $pdfLink): static
     {
-        $this->pdf_Link = $pdf_Link;
+        $this->pdfLink = $pdfLink;
 
         return $this;
     }
@@ -91,22 +91,23 @@ class Fds
         return $this->lastUpdated;
     }
 
-    public function setLastUpdated(\DateTimeInterface $lastUpdated): static
+    public function setLastUpdated(?\DateTimeInterface $lastUpdated): static
     {
         $this->lastUpdated = $lastUpdated;
 
         return $this;
     }
 
-    public function getProductId(): ?Products
+    public function getProducts(): ?Products
     {
-        return $this->productId;
+        return $this->products;
     }
 
-    public function setProductId(Products $productId): static
+    public function setProducts(?Products $products): static
     {
-        $this->productId = $productId;
+        $this->products = $products;
 
         return $this;
     }
+
 }
