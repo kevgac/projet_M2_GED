@@ -18,7 +18,6 @@ class PdfController extends AbstractController
             throw $this->createNotFoundException('Produit non trouvé.');
         }
 
-        // Ici, on accède directement à l'entité Fds liée au produit
         $fds = $product->getFds();
 
         $html = $this->renderView('pdf/index.html.twig', [

@@ -58,7 +58,7 @@ class CreateAdminCommand extends Command
             return;
         }
 
-        $this->io->title('Add admin command interactive wizard');
+        $this->io->title('Ajouter un administrateur :');
         $this->askArgument($input, 'email');
         $this->askArgument($input, 'password', hidden: true);
         $this->askArgument($input, 'first_name');

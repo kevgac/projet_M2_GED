@@ -17,13 +17,9 @@ class ProductsController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Assurez-vous que l'utilisateur est connecté
         if (!$user) {
-            // Rediriger vers la page de connexion si non connecté
             return $this->redirectToRoute('app_login');
         }
-
-        // Récupérez les produits associés à l'utilisateur
         $products = $user->getProducts();
 
         return $this->render('products/index.html.twig', [
